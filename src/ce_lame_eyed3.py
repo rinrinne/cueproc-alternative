@@ -31,7 +31,7 @@ class LameEyeD3Output(OutputModule):
     def __init__(self):
         self.name = 'lame_eyed3'
         self.ext = '.mp3'
-        self.is_utf8 = True
+        self.is_utf8 = False
         self.cmd = 'lame'
 
         self.doc = OutputModuleDocument()
@@ -148,14 +148,16 @@ class LameEyeD3Output(OutputModule):
             if bool(track['COMPILATION']):
                 tag.setTextFrame("TCMP", "1")
                 self.console.write(TAG_FMT % ('COPMPILATION', u"1"))
-            
+        
+        if track.get('ALBUMART'):
+            if os.path.isfile(track.get('ALBUMART').encode(options.syscharset)):
+                tag.addImage(eyeD3.ImageFrame.FRONT_COVER, track.get('ALBUMART').encode(options.syscharset))
+                self.console.write(TAG_FMT % ('ALBUMART', track.get('ALBUMART', u"")))
+        
         if track.get('COMMENT'):
             tag.removeComments()
             tag.addComment(track.get('COMMENT'))
             self.console.write(TAG_FMT % ('COMMENT', '\n' + track.get('COMMENT', u"")))
-        if track.get('ALBUMART'):
-            if os.path.isfile(track.get('ALBUMART').encode(options.syscharset)):
-                tag.addImage(eyeD3.ImageFrame.FRONT_COVER, track.get('ALBUMART').encode(options.syscharset))
         
         tag.update()
         return 0
