@@ -1,0 +1,10 @@
+Thumbs.db
+dist
+build
+Draft
+src/dist
+*~
+*.pyc
+*.bak
+*.BAK
+test.*
