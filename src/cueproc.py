@@ -372,6 +372,8 @@ def process(options, target):
         # Generate an output directory name
         odir = evaluate_expression(options.outputdir, track, globals(), locals())
         odir = pstr(odir).strip()
+        if options.basedir is not None:
+            odir = os.path.join(options.basedir, odir)
 
         # Generate an output filename.
         ofn = evaluate_expression(options.outputfn, track, globals(), locals())
@@ -456,6 +458,13 @@ if __name__ == '__main__':
         usage="%prog [options] <target> [<target2> ...]\n"
         "Execute a job for each track in the target CD image(s).",
         version="CueProc %s" % VERSION
+        )
+    parser.add_option(
+        "-b", "--basedir",
+        action="store", type="string", dest="basedir",
+        metavar="DIRECTORY",
+        default=None,
+        help="Specify an output base directory name."
         )
     parser.add_option(
         "-c", "--output",
@@ -639,6 +648,9 @@ if __name__ == '__main__':
     sys.stderr = codecs.getwriter(options.syscharset)(sys.stderr)
     fo = sys.stdout
     fe = sys.stderr
+
+    if options.basedir is not None:
+        options.basedir = os.path.abspath(options.basedir)
 
     # Run the jobs.
     if options.list_codec:
