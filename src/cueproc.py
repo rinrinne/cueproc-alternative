@@ -373,7 +373,8 @@ def process(options, target):
         odir = evaluate_expression(options.outputdir, track, globals(), locals())
         odir = pstr(odir).strip()
         if options.basedir is not None:
-            odir = os.path.join(options.basedir, odir)
+            if not os.path.isabs(odir):
+                odir = os.path.join(options.basedir, odir)
 
         # Generate an output filename.
         ofn = evaluate_expression(options.outputfn, track, globals(), locals())
