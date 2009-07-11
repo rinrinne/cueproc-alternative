@@ -114,7 +114,7 @@ def read_cuesheet(fp):
     for line in fp:
         num += 1
         
-        fields = __split(unicode(line).strip())     
+        fields = __split(unicode(line).strip())
         if not fields:
             continue
 
