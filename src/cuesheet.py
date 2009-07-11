@@ -51,13 +51,14 @@ class CSTrack:
         self.filename = None
         self.title = None
         self.performer = None
+        self.songwriter = None
         self.rem = {}
         self.indexes = {}
         self.isrc = None
         self.catalog = None
     def __repr__(self):
-        r = "{filename: %r, title: %r, performer: %r}" % (
-            self.filename, self.title, self.performer
+        r = "{filename: %r, title: %r, performer: %r, songwriter}" % (
+            self.filename, self.title, self.performer, self.songwriter
             )
         return r
 
@@ -136,6 +137,11 @@ def read_cuesheet(fp):
                 tracks[-1].performer = fields[1]
             else:
                 raise CuesheetFieldError(num, line)
+        elif command == "SONGWRITER":
+            if len(fields) > 1:
+                tracks[-1].songwriter = fields[1]
+            else:
+                raise CuesheetFieldError(num, line)
         elif command == "FILE":
             if len(fields) > 1:
                 audiofile = fields[1]
@@ -195,6 +201,8 @@ def to_playlist(cs, pregap = False, delgap = False):
         track['TITLE'] = __let(cs[i].title, "")
         track['ARTIST'] = __let(cs[i].performer, cs[0].performer)
         track['ALBUMARTIST'] = cs[0].performer
+        track['COMPOSER'] = __let(cs[i].songwriter, cs[0].songwriter)
+#       track['ALBUMCOMPOSER'] = cs[0].songwriter
         track['ALBUM'] = cs[0].title
         track['GENRE'] = __let(cs[i].rem.get("GENRE"), cs[0].rem.get("GENRE"))
         track['tracknumber'] = i
