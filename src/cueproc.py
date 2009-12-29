@@ -27,7 +27,7 @@ This program requires Python 2.4 or later.
 
 
 # Program version and author
-VERSION = '1.10A'
+VERSION = '1.10.2'
 AUTHOR = 'Nyaochi'
 
 

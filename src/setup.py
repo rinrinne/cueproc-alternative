@@ -27,7 +27,7 @@ import py2exe
 
 setup(
     name='cueproc',
-    version='1.10A',
+    version='1.10.2',
     description='Cuesheet Processor (CueProc)',
     author='nyaochi',
     author_email='nyaochi2008@nyaochi.sakura.ne.jp',
