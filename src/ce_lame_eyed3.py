@@ -74,6 +74,7 @@ class LameEyeD3Output(OutputModule):
         if not eyeD3.isMp3File(track['output'].encode(options.syscharset)):
             return -1
         
+        trknum = None
         tag = eyeD3.Tag()
         tag.link(track['output'].encode(options.syscharset))
         if self.tagversion == 23:
@@ -128,7 +129,8 @@ class LameEyeD3Output(OutputModule):
     
         Nums = [None, None]
         if track.get('TRACKNUMBER'):
-            Nums[0] = int(track.get('TRACKNUMBER'))
+            trknum  = track.get('TRACKNUMBER')
+            Nums[0] = int(trknum)
             self.__formattag(track, 'TRACKNUMBER')
         if track.get('TOTALTRACKS'):
             Nums[1] = int(track.get('TOTALTRACKS'))
@@ -150,9 +152,17 @@ class LameEyeD3Output(OutputModule):
                 self.console.write(TAG_FMT % ('COPMPILATION', u"1"))
         
         if track.get('ALBUMART'):
-            if os.path.isfile(track.get('ALBUMART').encode(options.syscharset)):
-                tag.addImage(eyeD3.ImageFrame.FRONT_COVER, track.get('ALBUMART').encode(options.syscharset))
-                self.console.write(TAG_FMT % ('ALBUMART', track.get('ALBUMART', u"")))
+            # Numbered cover
+            img = track.get('ALBUMART')
+            (fname, ext) = os.path.splitext(img)
+            nimg = fname + "_" + trknum + ext
+            if trknum is not None and os.path.isfile(nimg.encode(options.syscharset)):
+                img = nimg
+            elif not os.path.isfile(img.encode(options.syscharset)):
+                img = None
+            if img is not None:
+                tag.addImage(eyeD3.ImageFrame.FRONT_COVER, img.encode(options.syscharset))
+                self.console.write(TAG_FMT % ('ALBUMART', img))
         
         if track.get('COMMENT'):
             tag.removeComments()
