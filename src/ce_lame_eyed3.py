@@ -169,5 +169,7 @@ class LameEyeD3Output(OutputModule):
             tag.addComment(track.get('COMMENT'))
             self.console.write(TAG_FMT % ('COMMENT', '\n' + track.get('COMMENT', u"")))
         
+        self.console.write("=================================================")
+        
         tag.update()
         return 0
