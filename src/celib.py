@@ -25,6 +25,8 @@ import exceptions
 import os
 import string
 import sys
+import re
+import os.path
 
 class InvalidParameter(exceptions.ValueError):
     pass
@@ -39,30 +41,62 @@ def qstr(value):
             return u'"' + value + u'"'
     return value
 
+#def fstr(value):
+#    """ Convert the value to a unicode string suitable for a filename.
+#    """
+#    value = value.replace('\\', ' ')
+#    value = value.replace('/', ' ')
+#    value = value.replace(':', ' ')
+#    value = value.replace('*', ' ')
+#    value = value.replace('?', ' ')
+#    value = value.replace('"', ' ')
+#    value = value.replace('<', ' ')
+#    value = value.replace('>', ' ')
+#    value = value.replace('|', ' ')
+#    return value
+#
+#def pstr(value):
+#    """ Convert the value to a unicode string suitable for a filename.
+#    """
+#    value = value.replace('*', ' ')
+#    value = value.replace('?', ' ')
+#    value = value.replace('"', ' ')
+#    value = value.replace('<', ' ')
+#    value = value.replace('>', ' ')
+#    value = value.replace('|', ' ')
+#    return value
+
 def fstr(value):
     """ Convert the value to a unicode string suitable for a filename.
     """
-    value = value.replace('\\', ' ')
-    value = value.replace('/', ' ')
-    value = value.replace(':', ' ')
-    value = value.replace('*', ' ')
-    value = value.replace('?', ' ')
-    value = value.replace('"', ' ')
-    value = value.replace('<', ' ')
-    value = value.replace('>', ' ')
-    value = value.replace('|', ' ')
-    return value
+    value = re.sub(r'\.+$', '', value).translate((ord(char), u' ') for char in u'\\/:*?"<>|')
+    return value.strip()
 
 def pstr(value):
     """ Convert the value to a unicode string suitable for a filename.
     """
-    value = value.replace('*', ' ')
-    value = value.replace('?', ' ')
-    value = value.replace('"', ' ')
-    value = value.replace('<', ' ')
-    value = value.replace('>', ' ')
-    value = value.replace('|', ' ')
-    return value
+    varlist = []
+    pathlist = splitpath(value)
+    
+    if pathlist[0] != '':
+        varlist.append(pathlist[0])
+        pathlist = pathlist[1:]
+    
+    for path in pathlist:
+        varlist.append(fstr(path))
+    
+    os.path.join(*varlist)
+
+def splitpath(value):
+    """ Split path to list.
+    """
+    head, tail = os.path.split(value)
+
+    if head == value:
+        return [head]
+    else:
+        return splistpath(head) + [tail]
+
 
 class optstr:
     def __init__(self, name = None, value = None):
