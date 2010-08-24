@@ -69,7 +69,8 @@ def qstr(value):
 def fstr(value):
     """ Convert the value to a unicode string suitable for a filename.
     """
-    value = re.sub(r'\.+$', '', value).translate((ord(char), u' ') for char in u'\\/:*?"<>|')
+    if re.match(r'^\.+$', value) is None:
+        value = re.sub(r'\.+$', '', value).translate(dict((ord(char), u' ') for char in u'\\/:*?"<>|'))
     return value.strip()
 
 def pstr(value):
@@ -85,7 +86,7 @@ def pstr(value):
     for path in pathlist:
         varlist.append(fstr(path))
     
-    os.path.join(*varlist)
+    return os.path.join(*varlist)
 
 def splitpath(value):
     """ Split path to list.
@@ -95,7 +96,7 @@ def splitpath(value):
     if head == value:
         return [head]
     else:
-        return splistpath(head) + [tail]
+        return splitpath(head) + [tail]
 
 
 class optstr:
